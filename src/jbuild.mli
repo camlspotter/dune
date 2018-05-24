@@ -352,6 +352,10 @@ module Env : sig
     }
 end
 
+module Leopard : sig
+  type t = unit
+end
+
 module Stanza : sig
   type t =
     | Library     of Library.t
@@ -364,6 +368,7 @@ module Stanza : sig
     | Menhir      of Menhir.t
     | Documentation of Documentation.t
     | Env         of Env.t
+    | Leopard     of Leopard.t
 end
 
 module Stanzas : sig

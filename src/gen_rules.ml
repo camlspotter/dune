@@ -18,6 +18,7 @@ module Gen(P : Install_rules.Params) = struct
 
   let stanzas_per_dir =
     List.map (SC.stanzas sctx) ~f:(fun stanzas ->
+Format.eprintf "debug: %s@." @@ Path.to_string stanzas.SC.Dir_with_jbuild.src_dir;
       (stanzas.SC.Dir_with_jbuild.ctx_dir, stanzas))
     |> Path.Map.of_list_exn
 
@@ -268,7 +269,7 @@ module Gen(P : Install_rules.Params) = struct
                   | Direct _ -> None
                   | Select s -> Some s.result_fn)
               | Documentation _ | Alias _ | Provides _ | Install _
-              | Env _ -> [])
+              | Env _ | Leopard _ -> [])
             |> String.Set.of_list
           in
           String.Set.union generated_files

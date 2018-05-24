@@ -131,6 +131,7 @@ let ocamlpath_sep =
     Bin.path_sep
 
 let create ~(kind : Kind.t) ~path ~env ~name ~merlin ~targets ~profile () =
+  Format.eprintf "Dune: Context.create: name=%s@." name;
   let opam_var_cache = Hashtbl.create 128 in
   (match kind with
    | Opam { root; _ } ->
@@ -199,6 +200,7 @@ let create ~(kind : Kind.t) ~path ~env ~name ~merlin ~targets ~profile () =
 
     let build_dir = Path.relative Path.build_dir name in
     let ocamlpath =
+Format.eprintf "debug: ocamlpath@.";      
       match
         let var = "OCAMLPATH" in
         match kind, findlib_toolchain with
@@ -360,6 +362,7 @@ let create ~(kind : Kind.t) ~path ~env ~name ~merlin ~targets ~profile () =
       ; ccomp_type              = Ocaml_config.ccomp_type              ocfg
       ; c_compiler              = Ocaml_config.c_compiler              ocfg
       ; ocamlc_cflags           = Ocaml_config.ocamlc_cflags           ocfg
+
       ; ocamlopt_cflags         = Ocaml_config.ocamlopt_cflags         ocfg
       ; bytecomp_c_libraries    = Ocaml_config.bytecomp_c_libraries    ocfg
       ; native_c_libraries      = Ocaml_config.native_c_libraries      ocfg

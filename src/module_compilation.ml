@@ -90,7 +90,7 @@ let build_cm sctx ?sandbox ~dynlink ~flags ~cm_kind ~dep_graphs
         (Build.paths extra_deps >>>
          other_cm_files >>>
          Ocaml_flags.get_for_cm flags ~cm_kind >>>
-         Build.run ~context:ctx (Ok compiler)
+         Build.run ~context:ctx (Ok compiler) (* compiler = ocamlc, etc. *)
            [ Dyn (fun ocaml_flags -> As ocaml_flags)
            ; cmt_args
            ; A "-I"; Path obj_dir

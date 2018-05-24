@@ -217,6 +217,11 @@ let prog_and_args ?(dir=Path.root) prog args =
 
 let run ~context ?(dir=context.Context.build_dir) ?stdout_to prog args =
   let targets = Arg_spec.add_targets args (Option.to_list stdout_to) in
+Format.eprintf "debug: Build.run: prog=%s@." 
+  (match prog with
+   | Error e -> Printf.sprintf "not_found: %s" e.Action.Prog.Not_found.program
+   | Ok p -> Path.to_string p);
+
   prog_and_args ~dir prog args
   >>>
   Targets targets

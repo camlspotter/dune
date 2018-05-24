@@ -1217,6 +1217,10 @@ module Env = struct
         "S-expression of the form (<profile> <fields>) expected"
 end
 
+module Leopard = struct
+  type t = unit
+end
+
 module Stanza = struct
   type t =
     | Library     of Library.t
@@ -1229,6 +1233,7 @@ module Stanza = struct
     | Menhir      of Menhir.t
     | Documentation of Documentation.t
     | Env         of Env.t
+    | Leopard     of Leopard.t
 end
 
 module Stanzas = struct
