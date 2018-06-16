@@ -2,6 +2,7 @@ open Stdune
 
 module Eq = struct
   type ('a, 'b) t = T : ('a, 'a) t
+  (* T can only have types (u, u) t *)
 
   let cast (type a) (type b) (T : (a, b) t) (x : a) : b = x
 end
@@ -32,6 +33,7 @@ module Var0 = struct
     (module M : T with type t = a)
 
   let id (type a) (module M : T with type t = a) = M.id
+  (* return the ID of Var0.t *)                                                     
 
   let eq (type a) (type b)
         (module A : T with type t = a)
@@ -76,7 +78,7 @@ end = struct
     ; fibers   : int ref (* Number of fibers running in this execution
                             context *)
     ; vars     : Binding.t Int_map.t
-    ; on_release : unit -> unit
+    ; on_release : unit -> unit (* called when fibers becomes 0 *)
     }
 
   let vars t = t.vars
@@ -137,7 +139,7 @@ module EC = Execution_context
 
 type 'a t = Execution_context.t -> ('a -> unit) -> unit
 
-let return x _ k = k x
+let return x _ctx k = k x
 
 let never _ _ = ()
 
@@ -148,12 +150,18 @@ let catch f ctx k =
     EC.forward_error ctx exn
 
 module O = struct
+  (* a >>> b  
+     == a >>= fun () -> b 
+     == do a; b
+  *)
   let (>>>) a b ctx k =
     a ctx (fun () -> b ctx k)
 
+  (* bind *)
   let (>>=) t f ctx k =
     t ctx (fun x -> f x ctx k)
 
+  (* fmap *)
   let (>>|) t f ctx k =
     t ctx (fun x -> k (f x))
 end
@@ -165,6 +173,7 @@ let both a b =
   b >>= fun y ->
   return (x, y)
 
+(* mapM *)
 let all l =
   let rec loop l acc =
     match l with
@@ -173,6 +182,7 @@ let all l =
   in
   loop l []
 
+(* mapM_ *)
 let all_unit l = List.fold_left l ~init:(return ()) ~f:(>>>)
 
 type ('a, 'b) fork_and_join_state =
@@ -218,6 +228,7 @@ let fork_and_join_unit fa fb ctx k =
     | Got_a () -> k b
     | Got_b _ -> assert false)
 
+(* list_of_option_array [| Some x1; ..; Some xn |] = [ x1; ..; xn ] *)
 let list_of_option_array =
   let rec loop arr i acc =
     if i = 0 then
